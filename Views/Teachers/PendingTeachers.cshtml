@@ -1,0 +1,99 @@
+﻿@using SchoolApp.Models.Common
+@model IEnumerable<SchoolApp.ViewModels.Teachers.PendingTeacherVM>
+
+@{
+    ViewData["Title"] = "Pending Teachers";
+}
+
+<h2 class="mb-4">Pending Teachers</h2>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Success"]
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["Error"]
+    </div>
+}
+
+<table class="table table-bordered table-striped align-middle">
+    <thead class="table-dark">
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Specialization</th>
+            <th>Status</th>
+            <th style="width:250px;">Actions</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var teacher in Model)
+        {
+            <tr>
+                <td>@teacher.Name</td>
+                <td>@teacher.Email</td>
+                <td>@teacher.Specialization</td>
+
+                <td>
+                    <!-- We use string comparison for status -->
+                    @if (teacher.Status == "Pending")   
+                    {
+                        <span class="badge bg-warning text-dark">Pending</span>
+                    }
+                    else if (teacher.Status == "Approved")
+                    {
+                        <span class="badge bg-success">Approved</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger">Rejected</span>
+                    }
+                </td>
+                <td>
+                    <!-- APPROVE BUTTON -->
+                    <form asp-controller="Teachers"
+                          asp-action="ApproveTeacher"
+                          method="post"
+                          class="d-inline">
+
+                        @Html.AntiForgeryToken()
+
+                        <input type="hidden"
+                               name="teacherId"
+                               value="@teacher.Id" />
+
+                        <button type="submit"
+                                class="btn btn-success btn-sm">
+                            ✅ Approve
+                        </button>
+                    </form>
+
+                    <!-- REJECT BUTTON -->
+                    <form asp-controller="Teachers"
+                          asp-action="RejectTeacher"
+                          method="post"
+                          class="d-inline">
+
+                        @Html.AntiForgeryToken()
+
+                        <input type="hidden"
+                               name="teacherId"
+                               value="@teacher.Id" />
+
+                        <button type="submit"
+                                class="btn btn-danger btn-sm"
+                                onclick="return confirm('Are you sure you want to reject this teacher?');">
+                            ❌ Reject
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

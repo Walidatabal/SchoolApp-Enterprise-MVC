@@ -1,0 +1,102 @@
+﻿@model SchoolApp.ViewModels.Teachers.TeacherDetailsVM
+
+@using SchoolApp.Common.Constants
+@using SchoolApp.Models.Common
+
+@{
+    ViewData["Title"] = "Teacher Details";
+}
+
+<div class="container mt-4">
+
+    <div class="card border-0 shadow-sm">
+
+        <!-- Header -->
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0">
+                Teacher Details
+            </h3>
+        </div>
+
+        <!-- Body -->
+        <div class="card-body">
+
+            <div class="row mb-3">
+
+                <div class="col-md-3 fw-bold">
+                    Name
+                </div>
+
+                <div class="col-md-9">
+                    @Model.Name
+                </div>
+
+            </div>
+
+            <div class="row mb-3">
+
+                <div class="col-md-3 fw-bold">
+                    Specialization
+                </div>
+
+                <div class="col-md-9">
+                    @Model.Specialization
+                </div>
+
+            </div>
+
+            <div class="row mb-3">
+
+                <div class="col-md-3 fw-bold">
+                    Status
+                </div>
+
+                <div class="col-md-9">
+
+                    @if (Model.Status == ApprovalStatus.Approved)
+                    {
+                        <span class="badge bg-success">
+                            Approved
+                        </span>
+                    }
+                    else if (Model.Status == ApprovalStatus.Pending)
+                    {
+                        <span class="badge bg-warning text-dark">
+                            Pending
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger">
+                            Rejected
+                        </span>
+                    }
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <div class="card-footer">
+
+            <a asp-action="Index"
+                   class="btn btn-secondary">
+                Back
+            </a>
+
+            @if (User.IsInRole(Roles.Admin))
+            {
+                <a asp-action="Edit"
+                       asp-route-id="@Model.Id"
+                       class="btn btn-warning">
+                    Edit
+                </a>
+            }
+
+        </div>
+
+    </div>
+
+</div>

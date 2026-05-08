@@ -1,0 +1,35 @@
+﻿@model SchoolApp.ViewModels.Enrollments.EnrollmentCreateVM
+
+@{
+    ViewData["Title"] = "Create Enrollment";
+}
+
+<h2>Create Enrollment</h2>
+
+<form asp-action="Create" method="post">
+
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label asp-for="StudentId">Student</label>
+        <select asp-for="StudentId" asp-items="ViewBag.Students" class="form-control">
+            <option value="">-- Select Student --</option>
+        </select>
+        <span asp-validation-for="StudentId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="CourseIds">Courses</label>
+        <select asp-for="CourseIds" asp-items="ViewBag.Courses" class="form-control" multiple>
+        </select>
+        <!-- multiple = allow selecting more than one course -->
+
+        <span asp-validation-for="CourseIds" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,155 @@
+﻿@model SchoolApp.ViewModels.Profile.ProfileVM
+
+@{
+    ViewData["Title"] = "My Profile";
+}
+
+<!-- ========================= -->
+<!-- PROFILE HEADER -->
+<!-- ========================= -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+        <h2 class="fw-bold mb-1">
+            My Profile
+        </h2>
+
+        <p class="text-muted mb-0">
+            Your account and school profile information.
+        </p>
+    </div>
+
+    <!-- Profile badge -->
+    <span class="badge bg-dark px-3 py-2">
+        @Model.ProfileType
+    </span>
+
+</div>
+
+<!-- ========================= -->
+<!-- PROFILE CARD -->
+<!-- ========================= -->
+<div class="card border-0 shadow-sm rounded-4">
+
+    <div class="card-body p-4">
+
+        <!-- ========================= -->
+        <!-- PROFILE INFORMATION -->
+        <!-- ========================= -->
+        <div class="row g-3">
+
+            <!-- ========================= -->
+            <!-- EMAIL -->
+            <!-- ========================= -->
+            <div class="col-md-6">
+
+                <label class="text-muted small">
+                    Email
+                </label>
+
+                <div class="fw-bold">
+                    @Model.Email
+                </div>
+
+            </div>
+
+            <!-- ========================= -->
+            <!-- ROLE -->
+            <!-- ========================= -->
+            <div class="col-md-6">
+
+                <label class="text-muted small">
+                    Role
+                </label>
+
+                <div class="fw-bold">
+                    @Model.Role
+                </div>
+
+            </div>
+
+            <!-- ========================= -->
+            <!-- FULL NAME -->
+            <!-- ========================= -->
+            <div class="col-md-6">
+
+                <label class="text-muted small">
+                    Full Name
+                </label>
+
+                <div class="fw-bold">
+                    @Model.FullName
+                </div>
+
+            </div>
+
+            <!-- ========================= -->
+            <!-- STUDENT BIRTH DATE -->
+            <!-- Only displayed for students -->
+            <!-- ========================= -->
+            @if (Model.BirthDate.HasValue)
+            {
+                <div class="col-md-6">
+
+                    <label class="text-muted small">
+                        Birth Date
+                    </label>
+
+                    <div class="fw-bold">
+                        @Model.BirthDate.Value.ToString("yyyy-MM-dd")
+                    </div>
+
+                </div>
+            }
+
+            <!-- ========================= -->
+            <!-- TEACHER SPECIALIZATION -->
+            <!-- Only displayed for teachers -->
+            <!-- ========================= -->
+            @if (!string.IsNullOrWhiteSpace(Model.Specialization))
+            {
+                <div class="col-md-6">
+
+                    <label class="text-muted small">
+                        Specialization
+                    </label>
+
+                    <div class="fw-bold">
+                        @Model.Specialization
+                    </div>
+
+                </div>
+            }
+
+        </div>
+
+        <!-- ========================= -->
+        <!-- ACTION BUTTONS -->
+        <!-- ========================= -->
+        <div class="mt-4 d-flex gap-2 flex-wrap">
+
+            <!-- User changes their own password -->
+            <a asp-action="ChangePassword"
+                   class="btn btn-outline-primary">
+
+                Change Password
+
+            </a>
+
+        </div>
+
+        <!-- ========================= -->
+        <!-- PENDING TEACHER WARNING -->
+        <!-- ========================= -->
+        @if (Model.ProfileType.Contains("Pending"))
+        {
+            <div class="alert alert-warning mt-4 mb-0">
+
+                Your teacher account is waiting for admin approval.
+
+            </div>
+        }
+
+    </div>
+
+</div>

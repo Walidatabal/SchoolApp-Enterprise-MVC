@@ -1,0 +1,42 @@
+﻿@model SchoolApp.ViewModels.Teachers.TeacherCreateVM
+
+@{
+    ViewData["Title"] = "Create Teacher";
+}
+
+<h2>Create Teacher</h2>
+
+<form asp-action="Create" method="post">
+
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <!-- Shows model-level validation errors -->
+
+    <div class="mb-3">
+        <label asp-for="Name"></label>
+        <!-- Displays label for Name -->
+
+        <input asp-for="Name" class="form-control" />
+        <!-- Binds input to TeacherCreateVM.Name -->
+
+        <span asp-validation-for="Name" class="text-danger"></span>
+        <!-- Displays validation error for Name -->
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Specialization"></label>
+        <!-- Displays label for Specialization -->
+
+        <input asp-for="Specialization" class="form-control" />
+        <!-- Binds input to TeacherCreateVM.Specialization -->
+
+        <span asp-validation-for="Specialization" class="text-danger"></span>
+        <!-- Displays validation error for Specialization -->
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <!-- Enables client-side validation -->
+}

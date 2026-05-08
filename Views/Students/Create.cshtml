@@ -1,0 +1,85 @@
+﻿@model SchoolApp.ViewModels.Students.StudentCreateVM
+
+@{
+    ViewData["Title"] = "Create Student";
+}
+
+<div class="container-fluid px-4">
+
+    <div class="card shadow-sm border-0 mt-4">
+        <div class="card-body">
+
+            <h2 class="fw-bold mb-4">Create Student</h2>
+
+            <form asp-action="Create" method="post">
+
+                @Html.AntiForgeryToken()
+
+                <div asp-validation-summary="ModelOnly"
+                     class="text-danger mb-3"></div>
+
+                <!-- Student Name -->
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label"></label>
+
+                    <input asp-for="Name"
+                           class="form-control" />
+
+                    <span asp-validation-for="Name"
+                          class="text-danger"></span>
+                </div>
+
+                <!-- BirthDate -->
+                <div class="mb-3">
+                    <label asp-for="BirthDate"
+                           class="form-label"></label>
+
+                    <input asp-for="BirthDate"
+                           type="date"
+                           class="form-control" />
+
+                    <span asp-validation-for="BirthDate"
+                          class="text-danger"></span>
+                </div>
+
+                <!-- Parent -->
+                <div class="mb-3">
+                    <label asp-for="ParentId"
+                           class="form-label">
+                        Parent
+                    </label>
+
+                    <select asp-for="ParentId"
+                            asp-items="Model.Parents"
+                            class="form-select">
+
+                        <option value="">
+                            -- No Parent Selected --
+                        </option>
+
+                    </select>
+
+                    <span asp-validation-for="ParentId"
+                          class="text-danger"></span>
+                </div>
+
+                <button type="submit"
+                        class="btn btn-primary">
+                    Save
+                </button>
+
+                <a asp-action="Index"
+                       class="btn btn-secondary">
+                    Back
+                </a>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

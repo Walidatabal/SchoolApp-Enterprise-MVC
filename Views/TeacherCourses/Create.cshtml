@@ -1,0 +1,86 @@
+﻿@model SchoolApp.ViewModels.TeacherCourses.AssignCoursesToTeacherVM
+
+@{
+    ViewData["Title"] = "Assign Courses To Teacher";
+}
+
+<h2 class="mb-4">Assign Courses To Teacher</h2>
+
+<form asp-action="Create" method="post">
+
+    <!-- ========================= -->
+    <!-- VALIDATION SUMMARY -->
+    <!-- ========================= -->
+    <!-- Shows all validation errors (FluentValidation + ModelState) -->
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <!-- ========================= -->
+    <!-- TEACHER DROPDOWN -->
+    <!-- ========================= -->
+    <div class="mb-3">
+
+        <!-- Label for teacher selection -->
+        <label asp-for="TeacherId" class="form-label fw-bold">
+            Teacher
+        </label>
+
+        <!-- Dropdown list -->
+        <!-- asp-for: binds selected value to TeacherId -->
+        <!-- asp-items: uses Model.Teachers list -->
+        <select asp-for="TeacherId"
+                asp-items="Model.Teachers"
+                class="form-control">
+
+            <!-- Default option -->
+            <option value="">-- Select Teacher --</option>
+
+        </select>
+
+        <!-- Validation message for TeacherId -->
+        <span asp-validation-for="TeacherId" class="text-danger"></span>
+
+    </div>
+
+    <!-- ========================= -->
+    <!-- COURSES MULTI-SELECT -->
+    <!-- ========================= -->
+    <div class="mb-3">
+
+        <!-- Label -->
+        <label asp-for="CourseIds" class="form-label fw-bold">
+            Courses
+        </label>
+
+        <!-- Multi-select -->
+        <!-- multiple: allows selecting more than one course -->
+        <!-- size: number of visible rows -->
+        <select asp-for="CourseIds"
+                asp-items="Model.Courses"
+                class="form-control"
+                multiple
+                size="6">
+        </select>
+
+        <!-- Validation message -->
+        <span asp-validation-for="CourseIds" class="text-danger"></span>
+
+    </div>
+
+    <!-- ========================= -->
+    <!-- SUBMIT BUTTON -->
+    <!-- ========================= -->
+    <button type="submit" class="btn btn-primary">
+        Save
+    </button>
+
+    <!-- Optional: Back button -->
+    <a asp-action="Index" class="btn btn-secondary ms-2">
+        Back
+    </a>
+
+</form>
+
+@section Scripts {
+    <!-- This enables client-side validation (FluentValidation integrated) -->
+    <partial name="_ValidationScriptsPartial" />
+}

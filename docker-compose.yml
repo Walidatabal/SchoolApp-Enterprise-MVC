@@ -1,0 +1,74 @@
+version: '3.9'
+
+services:
+
+  schoolapp:
+    build: .
+    container_name: schoolapp_app
+    restart: always
+
+    ports:
+      - "8080:8080"
+
+    depends_on:
+      - sqlserver
+      - seq
+
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+
+      ConnectionStrings__DefaultConnection: "Server=sqlserver,1433;Database=SchoolDB;User Id=sa;Password=YourStrong@Pass123;TrustServerCertificate=True;Encrypt=False;MultipleActiveResultSets=True"
+
+      Serilog__WriteTo__2__Name: "Seq"
+      Serilog__WriteTo__2__Args__serverUrl: "http://seq:80"
+
+    networks:
+      - school_network
+
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: schoolapp_sql
+    restart: always
+
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "YourStrong@Pass123"
+
+    ports:
+      - "1433:1433"
+
+    volumes:
+      - sql_data:/var/opt/mssql
+
+    networks:
+      - school_network
+
+
+  seq:
+    image: datalust/seq:latest
+    container_name: schoolapp_seq
+    restart: always
+
+    environment:
+      ACCEPT_EULA: "Y"
+      SEQ_FIRSTRUN_NOAUTHENTICATION: "true"
+
+    ports:
+      - "5341:80"
+
+    volumes:
+      - seq_data:/data
+
+    networks:
+      - school_network
+
+
+volumes:
+  sql_data:
+  seq_data:
+
+
+networks:
+  school_network:

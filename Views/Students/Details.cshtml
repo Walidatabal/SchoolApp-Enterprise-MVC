@@ -1,0 +1,73 @@
+﻿@model SchoolApp.ViewModels.Students.StudentDetailsVM
+
+@using SchoolApp.Common.Constants
+
+@{
+    ViewData["Title"] = "Student Details";
+}
+
+<div class="container mt-4">
+
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0">
+                Student Details
+            </h3>
+        </div>
+
+        <div class="card-body">
+
+            <div class="row mb-3">
+                <div class="col-md-3 fw-bold">
+                    Name
+                </div>
+
+                <div class="col-md-9">
+                    @Model.Name
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-3 fw-bold">
+                    Birth Date
+                </div>
+
+                <div class="col-md-9">
+                    @Model.BirthDate.ToString("yyyy-MM-dd")
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-3 fw-bold">
+                    Parent
+                </div>
+
+                <div class="col-md-9">
+                    @Model.ParentName
+                </div>
+            </div>
+
+        </div>
+
+        <div class="card-footer d-flex gap-2">
+
+            <a asp-action="Index"
+                   class="btn btn-secondary">
+                Back
+            </a>
+
+            @if (User.IsInRole(Roles.Admin))
+            {
+                <a asp-action="Edit"
+                       asp-route-id="@Model.Id"
+                       class="btn btn-warning">
+                    Edit
+                </a>
+            }
+
+        </div>
+
+    </div>
+
+</div>

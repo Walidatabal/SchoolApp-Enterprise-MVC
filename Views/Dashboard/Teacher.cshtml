@@ -1,0 +1,79 @@
+﻿@{
+    ViewData["Title"] = "Teacher Dashboard";
+}
+
+<div class="container mt-4">
+
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-body">
+
+            <h2 class="fw-bold mb-3">
+                Teacher Dashboard
+            </h2>
+
+            <p class="text-muted">
+                Welcome to your teacher dashboard.
+            </p>
+
+            <div class="row mt-4">
+
+                <div class="col-md-4 mb-3">
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body">
+
+                            <h5 class="fw-bold">
+                                Students
+                            </h5>
+
+                            <p class="text-muted">
+                                View students information.
+                            </p>
+
+                            <a asp-controller="Students"
+                                   asp-action="Index"
+                                   class="btn btn-primary">
+                                Open
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="col-md-4 mb-3">
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body">
+
+                            <h5 class="fw-bold">
+                                Courses
+                            </h5>
+
+                            <p class="text-muted">
+                                View assigned courses.
+                            </p>
+
+                            <a asp-controller="Courses"
+                                   asp-action="Index"
+                                   class="btn btn-success">
+                                Open
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

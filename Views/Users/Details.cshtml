@@ -1,0 +1,46 @@
+﻿@model SchoolApp.ViewModels.Users.UserListItemVM
+
+@{
+    ViewData["Title"] = "User Details";
+}
+
+<h2 class="fw-bold mb-3">User Details</h2>
+
+<div class="card">
+    <div class="card-body">
+
+        <p>
+            <strong>Email:</strong>
+            @Model.Email
+        </p>
+
+        <p>
+            <strong>Roles:</strong>
+            @Model.Roles
+        </p>
+
+        <p>
+            <strong>Status:</strong>
+            @if (Model.IsLocked)
+            {
+                <span class="badge bg-danger">Inactive / Locked</span>
+            }
+            else
+            {
+                <span class="badge bg-success">Active</span>
+            }
+        </p>
+
+        <a asp-action="ChangeRole"
+               asp-route-id="@Model.Id"
+               class="btn btn-warning">
+            Change Role
+        </a>
+
+        <a asp-action="Index"
+               class="btn btn-secondary">
+            Back
+        </a>
+
+    </div>
+</div>

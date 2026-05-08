@@ -1,0 +1,25 @@
+﻿@model Teacher
+
+@{
+    ViewData["Title"] = "Delete Teacher";
+}
+
+<h2>Delete Teacher</h2>
+
+<div class="alert alert-danger">
+    <strong>Warning!</strong> You are about to permanently delete this teacher. This action cannot be undone.
+</div>
+
+<dl class="row">
+    <dt class="col-sm-3">Name</dt>
+    <dd class="col-sm-9">@Model.Name</dd>
+    <dt class="col-sm-3">Specialization</dt>
+    <dd class="col-sm-9">@Model.Specialization</dd>
+</dl>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="Id" />
+    @Html.AntiForgeryToken()
+    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

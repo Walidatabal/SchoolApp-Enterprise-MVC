@@ -1,0 +1,45 @@
+﻿@model ErrorViewModel
+
+@{
+    ViewData["Title"] = "Error";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+
+            <div class="card shadow-sm border-danger">
+                <div class="card-body text-center p-5">
+
+                    <h1 class="text-danger mb-3">
+                        Something went wrong
+                    </h1>
+
+                    <h5 class="text-muted mb-4">
+                        An unexpected error occurred while processing your request.
+                    </h5>
+
+                    <p>
+                        Please try again later or contact support if the problem continues.
+                    </p>
+
+                    @if (Model.ShowRequestId)
+                    {
+                        <div class="alert alert-light border mt-4">
+                            <strong>Request ID:</strong>
+                            <code>@Model.RequestId</code>
+                        </div>
+                    }
+
+                    <a asp-controller="Home"
+                           asp-action="Index"
+                           class="btn btn-primary mt-3">
+                        Back to Home
+                    </a>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

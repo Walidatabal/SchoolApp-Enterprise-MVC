@@ -1,0 +1,31 @@
+﻿@{
+    ViewData["Title"] = "User Dashboard";
+}
+
+<div class="container mt-4">
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-body text-center py-5">
+
+            <h2 class="fw-bold mb-3">
+                Welcome to SchoolApp
+            </h2>
+
+            <p class="text-muted mb-4">
+                Your account is active, but no school role has been assigned yet.
+            </p>
+
+            <div class="alert alert-info">
+                Please wait for an administrator to assign your role.
+            </div>
+
+            <a asp-controller="Profile"
+                   asp-action="Index"
+                   class="btn btn-primary">
+                Go to My Profile
+            </a>
+
+        </div>
+    </div>
+
+</div>

@@ -1,0 +1,78 @@
+﻿@model SchoolApp.ViewModels.TeacherCourses.AssignCoursesToTeacherVM
+
+@{
+    ViewData["Title"] = "Assign Courses To Teacher";
+}
+
+<h2 class="mb-4">Assign Courses To Teacher</h2>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Success"]
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["Error"]
+    </div>
+}
+
+<form asp-action="Assign" method="post">
+
+    @Html.AntiForgeryToken()
+
+    <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+    <!-- Teacher Dropdown -->
+    <div class="mb-3">
+        <label asp-for="TeacherId" class="form-label fw-bold">
+            Teacher
+        </label>
+
+        <select asp-for="TeacherId"
+                asp-items="Model.Teachers"
+                class="form-select">
+
+            <option value="">-- Select Teacher --</option>
+        </select>
+
+        <span asp-validation-for="TeacherId"
+              class="text-danger">
+        </span>
+    </div>
+
+    <!-- Courses Multi Select -->
+    <div class="mb-3">
+        <label asp-for="CourseIds" class="form-label fw-bold">
+            Courses
+        </label>
+
+        <select asp-for="CourseIds"
+                asp-items="Model.Courses"
+                class="form-select"
+                multiple
+                size="8">
+        </select>
+
+        <span asp-validation-for="CourseIds"
+              class="text-danger">
+        </span>
+    </div>
+
+    <button type="submit" class="btn btn-success">
+        Save Assignment
+    </button>
+
+    <a asp-action="Index"
+           class="btn btn-secondary">
+        Back
+    </a>
+</form>
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+}

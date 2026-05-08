@@ -1,0 +1,34 @@
+﻿@model SchoolApp.ViewModels.Courses.CourseEditVM
+
+@{
+    ViewData["Title"] = "Edit Course";
+}
+
+<h2>Edit Course</h2>
+
+<form asp-action="Edit" method="post">
+
+    <input type="hidden" asp-for="Id" />
+
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label asp-for="Name"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="TeacherIds">Teachers</label>
+        <select asp-for="TeacherIds" asp-items="ViewBag.Teachers" class="form-control" multiple>
+        </select>
+        <!-- shows selected teachers and allows changing them -->
+        <span asp-validation-for="TeacherIds" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-warning">Update</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

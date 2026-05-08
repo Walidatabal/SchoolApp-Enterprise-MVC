@@ -1,0 +1,37 @@
+﻿@model SchoolApp.ViewModels.Students.StudentEditVM   // هنا بنحدد إن الموديل الخاص بالعرض ده هو Student، يعني كل البيانات اللي هتتعرض أو تتعدل في الفورم ده هتكون من نوع Student.
+
+<h2>Edit Student</h2>  <!-- // عنوان الصفحة-->
+
+
+
+<form asp-action="Edit" method="post">
+	<!-- // الفورم ده هيبعت البيانات اللي المستخدم عدلها في الحقول دي لما يضغط على زر Update، وهيبعتها للـ Edit action في الـ StudentController -->
+
+    <input type="hidden" asp-for="Id" /> <!-- مهم جدًا: عشان نعرف أي Student نعدل -->
+
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label asp-for="Name"></label> <!-- It is used for  --!>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="BirthDate"></label>
+        <input asp-for="BirthDate" type="date" class="form-control" />
+        <span asp-validation-for="BirthDate"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="ParentId" class="form-label">Parent</label>
+        <select asp-for="ParentId"
+                asp-items="Model.Parents"
+                class="form-select">
+            <option value="">-- No Parent Selected --</option>
+        </select>
+        <span asp-validation-for="ParentId" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-warning">Update</button>
+</form>

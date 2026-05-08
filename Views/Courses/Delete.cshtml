@@ -1,0 +1,44 @@
+﻿@model SchoolApp.ViewModels.Courses.CourseDeleteVM
+
+<h2>Delete Course</h2>
+
+<div class="alert alert-danger">
+    <!-- ✅ Clear warning shown BEFORE the user clicks confirm -->
+    <strong>Warning!</strong> You are about to permanently delete this course.
+    This action cannot be undone.
+</div>
+
+<dl class="row">
+    <dt class="col-sm-3">Course Name</dt>
+    <dd class="col-sm-9">@Model.Name</dd>
+
+    <dt class="col-sm-3">Assigned Teachers</dt>
+    <dd class="col-sm-9">
+        @(Model.TeacherNames.Any() ? string.Join(", ", Model.TeacherNames) : "None")
+    </dd>
+
+    <dt class="col-sm-3">Enrolled Students</dt>
+    <dd class="col-sm-9">
+        @if (Model.EnrollmentCount > 0)
+        {
+            <!-- ✅ Cascade warning: deleting this course removes all enrollments too -->
+            <span class="text-danger">
+                <strong>@Model.EnrollmentCount student enrollment(s) will also be deleted.</strong>
+            </span>
+        }
+        else
+        {
+            <span class="text-muted">No students enrolled</span>
+        }
+    </dd>
+</dl>
+
+<!-- ✅ The form POSTs to DeleteConfirmed — never a GET -->
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="Id" />
+    @Html.AntiForgeryToken()
+    <!-- AntiForgeryToken matches [ValidateAntiForgeryToken] on the controller -->
+
+    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

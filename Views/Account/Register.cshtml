@@ -1,0 +1,66 @@
+﻿@model SchoolApp.ViewModels.Account.RegisterVM
+
+@{
+    ViewData["Title"] = "Register";
+}
+
+<h2>Register</h2>
+
+<form asp-action="Register" method="post">
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label asp-for="Email"></label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Password"></label>
+        <input asp-for="Password" type="password" class="form-control" />
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="ConfirmPassword"></label>
+        <input asp-for="ConfirmPassword" type="password" class="form-control" />
+        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="FullName"></label>
+        <input asp-for="FullName" class="form-control" placeholder="Enter your full name" />
+        <span asp-validation-for="FullName" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label>Role</label>
+        <select asp-for="SelectedRole" asp-items="Model.Roles" class="form-control" id="roleSelect">
+            <option value="">-- Select Role --</option>
+        </select>
+    </div>
+
+    <div class="mb-3" id="specializationField" style="display:none;">
+        <label asp-for="Specialization"></label>
+        <input asp-for="Specialization" class="form-control" placeholder="e.g. Computer Science, Math..." />
+        <span asp-validation-for="Specialization" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Register</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        const roleSelect = document.getElementById('roleSelect');
+        const specializationField = document.getElementById('specializationField');
+
+        function toggleSpecialization() {
+            specializationField.style.display = roleSelect.value === 'Teacher' ? 'block' : 'none';
+        }
+
+        roleSelect.addEventListener('change', toggleSpecialization);
+        toggleSpecialization(); // run on page load in case of validation re-render
+    </script>
+}

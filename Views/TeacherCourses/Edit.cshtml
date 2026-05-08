@@ -1,0 +1,50 @@
+﻿@model SchoolApp.ViewModels.TeacherCourses.AssignCoursesToTeacherVM
+
+@{
+    ViewData["Title"] = "Edit Teacher Courses";
+}
+
+<h2 class="mb-4">Edit Teacher Course Assignment</h2>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["Error"]
+    </div>
+}
+
+<form asp-action="Edit" method="post">
+    @Html.AntiForgeryToken()
+
+    <div class="mb-3">
+        <label asp-for="TeacherId" class="form-label">Teacher</label>
+        <select asp-for="TeacherId"
+                asp-items="Model.Teachers"
+                class="form-select">
+            <option value="">-- Select Teacher --</option>
+        </select>
+        <span asp-validation-for="TeacherId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="CourseIds" class="form-label">Courses</label>
+        <select asp-for="CourseIds"
+                asp-items="Model.Courses"
+                class="form-select"
+                multiple>
+        </select>
+        <span asp-validation-for="CourseIds" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-success">
+        Save Changes
+    </button>
+
+    <a asp-action="Index" class="btn btn-secondary">
+        Cancel
+    </a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

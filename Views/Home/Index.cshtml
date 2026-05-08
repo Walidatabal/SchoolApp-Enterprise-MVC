@@ -1,0 +1,274 @@
+﻿@{
+    ViewData["Title"] = "Home";
+}
+
+<!-- ========================= -->
+<!-- HERO SECTION -->
+<!-- ========================= -->
+<div class="container-fluid py-5">
+
+    <div class="row align-items-center mb-5">
+
+        <!-- LEFT SIDE: TEXT -->
+        <div class="col-lg-7">
+            <span class="badge bg-primary mb-3 px-3 py-2">
+                School Management System
+            </span>
+
+            <h1 class="display-5 fw-bold mb-3">
+                Manage your school data with clarity and control.
+            </h1>
+
+            <p class="lead text-muted mb-4">
+                SchoolApp helps manage students, teachers, courses, enrollments,
+                users, roles, and administrative insights from one clean system.
+            </p>
+
+            <!-- ACTION BUTTONS -->
+            <div class="d-flex gap-2 flex-wrap">
+
+                @if (User.Identity != null && User.Identity.IsAuthenticated)
+                {
+                    <a asp-controller="Dashboard" asp-action="Index"
+                           class="btn btn-dark btn-lg px-4">
+                        Open Dashboard
+                    </a>
+
+                    <a asp-controller="Students" asp-action="Index"
+                           class="btn btn-outline-primary btn-lg px-4">
+                        View Students
+                    </a>
+                }
+                else
+                {
+                    <a asp-controller="Account" asp-action="Login"
+                           class="btn btn-dark btn-lg px-4">
+                        Login
+                    </a>
+
+                    <a asp-controller="Account" asp-action="Register"
+                           class="btn btn-outline-primary btn-lg px-4">
+                        Create Account
+                    </a>
+                }
+
+            </div>
+        </div>
+
+        <!-- RIGHT SIDE: INFO CARD -->
+        <div class="col-lg-5 mt-4 mt-lg-0">
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-4">
+
+                    <h5 class="fw-bold mb-3">System Highlights</h5>
+
+                    <div class="d-flex justify-content-between border-bottom py-2">
+                        <span>Architecture</span>
+                        <strong>Clean MVC</strong>
+                    </div>
+
+                    <div class="d-flex justify-content-between border-bottom py-2">
+                        <span>Security</span>
+                        <strong>Identity + Roles</strong>
+                    </div>
+
+                    <div class="d-flex justify-content-between border-bottom py-2">
+                        <span>API</span>
+                        <strong>JWT Ready</strong>
+                    </div>
+
+                    <div class="d-flex justify-content-between py-2">
+                        <span>Logging</span>
+                        <strong>Serilog</strong>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- ========================= -->
+    <!-- MODULES SECTION -->
+    <!-- ========================= -->
+    <div class="mb-4">
+        <h3 class="fw-bold mb-1">Main Modules</h3>
+        <p class="text-muted">
+            Quick access to the core parts of the application.
+        </p>
+    </div>
+
+    <div class="row g-3 mb-5">
+
+        <!-- Students -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold">Students</h5>
+                    <p class="text-muted">
+                        Manage student records and school enrollment data.
+                    </p>
+                    <a asp-controller="Students" asp-action="Index"
+                           class="btn btn-outline-dark btn-sm">
+                        Open Students
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Teachers -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold">Teachers</h5>
+                    <p class="text-muted">
+                        Manage teacher profiles and specializations.
+                    </p>
+                    <a asp-controller="Teachers" asp-action="Index"
+                           class="btn btn-outline-dark btn-sm">
+                        Open Teachers
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Courses -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold">Courses</h5>
+                    <p class="text-muted">
+                        Organize courses and connect them with teachers.
+                    </p>
+                    <a asp-controller="Courses" asp-action="Index"
+                           class="btn btn-outline-dark btn-sm">
+                        Open Courses
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enrollments -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold">Enrollments</h5>
+                    <p class="text-muted">
+                        Assign students to courses and track relationships.
+                    </p>
+                    <a asp-controller="Enrollments" asp-action="Index"
+                           class="btn btn-outline-dark btn-sm">
+                        Open Enrollments
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Teacher Courses -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold">Teacher Courses</h5>
+                    <p class="text-muted">
+                        Manage many-to-many assignments between teachers and courses.
+                    </p>
+                    <a asp-controller="TeacherCourses" asp-action="Index"
+                           class="btn btn-outline-dark btn-sm">
+                        Open Assignments
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm rounded-4 h-100 bg-light">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold">Admin Dashboard</h5>
+                    <p class="text-muted">
+                        View analytics, users, roles, and school statistics.
+                    </p>
+                    <a asp-controller="Dashboard" asp-action="Index"
+                           class="btn btn-dark btn-sm">
+                        Open Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ========================= -->
+    <!-- QUICK START SECTION -->
+    <!-- ========================= -->
+    <div class="card border-0 shadow-sm rounded-4 bg-light">
+        <div class="card-body p-4 d-flex justify-content-between align-items-center flex-wrap gap-3">
+
+            <div>
+                <h4 class="fw-bold mb-1">Ready to manage school data?</h4>
+                <p class="text-muted mb-0">
+                    Start from the dashboard or manage the main school modules.
+                </p>
+            </div>
+
+            <a asp-controller="Dashboard" asp-action="Index"
+                   class="btn btn-dark px-4">
+                Go to Dashboard
+            </a>
+
+        </div>
+    </div>
+
+    <!-- ========================= -->
+    <!-- PROJECT QUALITY SECTION -->
+    @* <!-- ========================= -->
+    <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-body p-4">
+
+            <h4 class="fw-bold mb-3">Project Quality</h4>
+
+            <div class="row g-3">
+
+                <div class="col-md-3">
+                    <div class="p-3 border rounded-4 h-100">
+                        <h6 class="fw-bold">Clean Architecture</h6>
+                        <small class="text-muted">
+                            Controller → Service → UnitOfWork → Repository.
+                        </small>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="p-3 border rounded-4 h-100">
+                        <h6 class="fw-bold">Authentication</h6>
+                        <small class="text-muted">
+                            ASP.NET Identity with role-based access.
+                        </small>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="p-3 border rounded-4 h-100">
+                        <h6 class="fw-bold">API Ready</h6>
+                        <small class="text-muted">
+                            JWT authentication and Swagger testing.
+                        </small>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="p-3 border rounded-4 h-100">
+                        <h6 class="fw-bold">Monitoring</h6>
+                        <small class="text-muted">
+                            Serilog logging and global exception handling.
+                        </small>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div> *@
+
+</div>

@@ -1,0 +1,39 @@
+﻿@model SchoolApp.ViewModels.Teachers.TeacherEditVM
+
+@{
+    ViewData["Title"] = "Edit Teacher";
+}
+
+<h2>Edit Teacher</h2>
+
+<form asp-action="Edit" method="post">
+
+    <input type="hidden" asp-for="Id" />
+    <!-- Hidden Id is required so controller knows which record to update -->
+
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <!-- Shows model-level validation errors -->
+
+    <div class="mb-3">
+        <label asp-for="Name"></label>
+
+        <input asp-for="Name" class="form-control" />
+
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Specialization"></label>
+
+        <input asp-for="Specialization" class="form-control" />
+
+        <span asp-validation-for="Specialization" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-warning">Update</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <!-- Enables client-side validation -->
+}

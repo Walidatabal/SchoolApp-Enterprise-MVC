@@ -1,0 +1,32 @@
+﻿@model SchoolApp.ViewModels.Courses.CourseCreateVM
+
+@{
+    ViewData["Title"] = "Create Course";
+}
+
+<h2>Create Course</h2>
+
+<form asp-action="Create" method="post">
+
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label asp-for="Name"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="TeacherIds">Teachers</label>
+        <select asp-for="TeacherIds" asp-items="ViewBag.Teachers" class="form-control" multiple>
+        </select>
+        <!-- multiple = allow selecting more than one teacher -->
+        <span asp-validation-for="TeacherIds" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
