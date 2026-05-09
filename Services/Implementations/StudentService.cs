@@ -312,5 +312,71 @@ public async Task<StudentCreateVM> BuildCreateVMAsync()
                 Text = p.FullName
             }).ToList();
         }
+
+        public async Task<StudentIndexVM> BuildIndexVMAsync(
+            string? searchTerm,
+            int? parentId,
+            int pageNumber,
+            int pageSize)
+        {
+            if (pageNumber <= 0)
+                pageNumber = 1;
+
+            if (pageSize <= 0)
+                pageSize = 10;
+
+            var students = await _unitOfWork.Students.GetAllAsync(q =>
+                q.Include(s => s.Parent));
+
+            var query = students.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                query = query.Where(s =>
+                    s.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
+            }
+
+            if (parentId.HasValue && parentId.Value > 0)
+            {
+                query = query.Where(s => s.ParentId == parentId.Value);
+            }
+
+            var totalItems = query.Count();
+
+            var pagedStudents = query
+                .OrderBy(s => s.Name)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .Select(s => new StudentListItemVM
+                {
+                    Id = s.Id,
+                    Name = s.Name,
+                    BirthDate = s.BirthDate,
+                    ParentName = s.Parent != null
+                        ? s.Parent.FullName
+                        : null
+                })
+                .ToList();
+
+            var parents = await _unitOfWork.Parents.GetAllAsync();
+
+            return new StudentIndexVM
+            {
+                Students = pagedStudents,
+                SearchTerm = searchTerm,
+                ParentId = parentId,
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+                TotalItems = totalItems,
+
+                Parents = parents.Select(p => new SelectListItem
+                {
+                    Value = p.Id.ToString(),
+                    Text = p.FullName,
+                    Selected = parentId.HasValue && p.Id == parentId.Value
+                }).ToList()
+            };
+        }
     }
+
 }

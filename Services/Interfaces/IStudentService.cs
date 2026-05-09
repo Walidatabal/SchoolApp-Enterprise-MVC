@@ -27,5 +27,10 @@ namespace SchoolApp.Services.Interfaces
         Task<StudentEditVM> RebuildEditVMAsync(StudentEditVM vm);
 
         Task<StudentDetailsVM?> BuildDetailsVMAsync(int id);
+        Task<StudentIndexVM> BuildIndexVMAsync(
+           string? searchTerm,
+           int? parentId,
+           int pageNumber,
+           int pageSize);
     }
 }

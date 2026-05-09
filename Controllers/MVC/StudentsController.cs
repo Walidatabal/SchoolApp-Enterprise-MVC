@@ -23,21 +23,19 @@ namespace SchoolApp.Controllers.MVC
 
         [Authorize(Roles = Roles.Admin + "," + Roles.Teacher)]
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(
+            string? searchTerm,
+            int? parentId,
+            int pageNumber = 1,
+            int pageSize = 10)
         {
-            var students = await _service.GetAllWithParentsAsync();
+            var vm = await _service.BuildIndexVMAsync(
+                searchTerm,
+                parentId,
+                pageNumber,
+                pageSize);
 
-            var model = students.Select(student => new StudentListItemVM
-            {
-                Id = student.Id,
-                Name = student.Name,
-                BirthDate = student.BirthDate,
-                ParentName = student.Parent != null
-                    ? student.Parent.FullName
-                    : null
-            }).ToList();
-
-            return View(model);
+            return View(vm);
         }
 
         [Authorize(Roles = Roles.Admin)]
@@ -163,5 +161,6 @@ namespace SchoolApp.Controllers.MVC
             TempData["Success"] = result.Message;
             return RedirectToAction(nameof(Index));
         }
+
     }
 }

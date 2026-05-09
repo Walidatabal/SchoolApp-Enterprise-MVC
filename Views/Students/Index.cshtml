@@ -1,4 +1,4 @@
-﻿@model IEnumerable<SchoolApp.ViewModels.Students.StudentListItemVM>
+﻿@model SchoolApp.ViewModels.Students.StudentIndexVM
 
 @using SchoolApp.Common.Constants
 
@@ -34,7 +34,92 @@
         </div>
 
     </div>
+    <form method="get" asp-action="Index" class="mb-4">
 
+        <div class="card border-0 shadow-sm">
+
+            <div class="card-body">
+
+                <div class="row g-3 align-items-end">
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">
+                            Search Student
+                        </label>
+
+                        <input type="text"
+                               name="searchTerm"
+                               value="@Model.SearchTerm"
+                               class="form-control"
+                               placeholder="Search by student name..." />
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label fw-semibold">
+                            Parent
+                        </label>
+
+                        <select name="parentId"
+                                asp-items="Model.Parents"
+                                class="form-select">
+
+                            <option value="">All Parents</option>
+
+                        </select>
+                    </div>
+
+                    <div class="col-md-2">
+                        <label class="form-label fw-semibold">
+                            Page Size
+                        </label>
+
+                        <select name="pageSize"
+                                class="form-select">
+
+                            <option value="5" selected="@(Model.PageSize == 5)">5</option>
+                            <option value="10" selected="@(Model.PageSize == 10)">10</option>
+                            <option value="20" selected="@(Model.PageSize == 20)">20</option>
+                            <option value="50" selected="@(Model.PageSize == 50)">50</option>
+
+                        </select>
+                    </div>
+
+                    <div class="col-md-3 d-flex gap-2">
+
+                        <button type="submit"
+                                class="btn btn-primary rounded-pill px-4">
+
+                            Search
+
+                        </button>
+
+                        <a asp-action="Index"
+                               class="btn btn-outline-secondary rounded-pill px-4">
+
+                            Clear
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </form>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+
+        <div class="text-muted small">
+            Showing page <strong>@Model.PageNumber</strong>
+            of <strong>@Model.TotalPages</strong>
+            — Total students:
+            <strong>@Model.TotalItems</strong>
+        </div>
+
+    </div>
     <!-- Table Card -->
     <div class="card border-0 shadow-sm">
 
@@ -69,7 +154,6 @@
 
                 </div>
             }
-
             <div class="table-responsive">
 
                 <table class="table table-hover align-middle mb-0">
@@ -97,7 +181,7 @@
 
                     <tbody>
 
-                        @if (!Model.Any())
+                        @if (!Model.Students.Any())
                         {
                             <tr>
 
@@ -111,8 +195,9 @@
                             </tr>
                         }
                         else
+
                         {
-                            foreach (var student in Model)
+                            @foreach (var student in Model.Students)
                             {
                                 <tr>
 
@@ -295,6 +380,65 @@
 
                 </table>
 
+
+                @if (Model.TotalPages > 1)
+                {
+                    <nav class="mt-4">
+
+                        <ul class="pagination justify-content-center">
+
+                            <li class="page-item @(Model.PageNumber <= 1 ? "disabled" : "")">
+
+                                <a class="page-link"
+                                       asp-action="Index"
+                                       asp-route-searchTerm="@Model.SearchTerm"
+                                       asp-route-parentId="@Model.ParentId"
+                                       asp-route-pageSize="@Model.PageSize"
+                                       asp-route-pageNumber="@(Model.PageNumber - 1)">
+
+                                    Previous
+
+                                </a>
+
+                            </li>
+
+                            @for (int i = 1; i <= Model.TotalPages; i++)
+                            {
+                                <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+
+                                    <a class="page-link"
+                                           asp-action="Index"
+                                           asp-route-searchTerm="@Model.SearchTerm"
+                                           asp-route-parentId="@Model.ParentId"
+                                           asp-route-pageSize="@Model.PageSize"
+                                           asp-route-pageNumber="@i">
+
+                                        @i
+
+                                    </a>
+
+                                </li>
+                            }
+
+                            <li class="page-item @(Model.PageNumber >= Model.TotalPages ? "disabled" : "")">
+
+                                <a class="page-link"
+                                       asp-action="Index"
+                                       asp-route-searchTerm="@Model.SearchTerm"
+                                       asp-route-parentId="@Model.ParentId"
+                                       asp-route-pageSize="@Model.PageSize"
+                                       asp-route-pageNumber="@(Model.PageNumber + 1)">
+
+                                    Next
+
+                                </a>
+
+                            </li>
+
+                        </ul>
+
+                    </nav>
+                }
             </div>
 
         </div>
