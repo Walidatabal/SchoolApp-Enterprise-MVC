@@ -245,7 +245,7 @@ public async Task<StudentCreateVM> BuildCreateVMAsync()
         // =========================
         public async Task<StudentCreateVM> RebuildCreateVMAsync(StudentCreateVM vm)
         {
-            vm.Parents = await BuildParentsSelectListAsync();
+            vm.Parents = await BuildParentsSelectListAsync(vm.ParentId);
             return vm;
         }
 
@@ -302,49 +302,113 @@ public async Task<StudentCreateVM> BuildCreateVMAsync()
         // =========================
         // PRIVATE DROPDOWN BUILDER
         // =========================
-        private async Task<IEnumerable<SelectListItem>> BuildParentsSelectListAsync()
+// =========================
+// BUILD PARENTS DROPDOWN
+// =========================
+// Used in:
+// - Create Student
+// - Edit Student
+// - Search Filter
+private async Task<IEnumerable<SelectListItem>> BuildParentsSelectListAsync(
+    int? selectedParentId = null)
+{
+    // Load all parents from database
+    var parents = await _unitOfWork.Parents.GetAllAsync();
+
+    // Convert parents into dropdown items
+    return parents
+        .OrderBy(p => p.FullName)
+        .Select(p => new SelectListItem
         {
-            var parents = await _unitOfWork.Parents.GetAllAsync();
+            Value = p.Id.ToString(),
 
-            return parents.Select(p => new SelectListItem
-            {
-                Value = p.Id.ToString(),
-                Text = p.FullName
-            }).ToList();
-        }
+            Text = p.FullName,
 
+            // Keep selected value after filtering/editing
+            Selected = selectedParentId.HasValue &&
+                       p.Id == selectedParentId.Value
+        })
+        .ToList();
+}
         public async Task<StudentIndexVM> BuildIndexVMAsync(
             string? searchTerm,
             int? parentId,
             int pageNumber,
             int pageSize)
         {
+            // =========================
+            // PAGINATION SAFETY
+            // =========================
+            // Prevent invalid page number values like 0 or negative numbers
             if (pageNumber <= 0)
                 pageNumber = 1;
 
+            // Prevent invalid page size values like 0 or negative numbers
             if (pageSize <= 0)
                 pageSize = 10;
 
+            // =========================
+            // LOAD STUDENTS WITH PARENTS
+            // =========================
+            // Current approach:
+            // Get students with Parent data using eager loading.
+            // Later we can improve this to database-level IQueryable pagination.
             var students = await _unitOfWork.Students.GetAllAsync(q =>
                 q.Include(s => s.Parent));
 
             var query = students.AsQueryable();
 
+            // =========================
+            // CLEAN SEARCH TEXT
+            // =========================
+            searchTerm = searchTerm?.Trim();
+
+            // =========================
+            // SEARCH FILTER
+            // =========================
             if (!string.IsNullOrWhiteSpace(searchTerm))
             {
+                // If user writes a number, allow search by Student ID
+                // Example: searchTerm = "5"
+                bool isStudentId = int.TryParse(searchTerm, out int studentId);
+
                 query = query.Where(s =>
-                    s.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
+
+                    // Search by Student ID
+                    (isStudentId && s.Id == studentId)
+
+                    // Search by Student Name
+                    || s.Name.Contains(searchTerm)
+
+                    // Search by Parent Name
+                    || (s.Parent != null &&
+                        s.Parent.FullName.Contains(searchTerm))
+                );
             }
 
-            if (parentId.HasValue && parentId.Value > 0)
+            // =========================
+            // PARENT FILTER
+            // =========================
+            if (parentId.HasValue)
             {
-                query = query.Where(s => s.ParentId == parentId.Value);
+                query = query.Where(s =>
+                    s.ParentId == parentId.Value);
             }
 
+            // =========================
+            // TOTAL ITEMS
+            // =========================
+            // Count items after applying search/filter
+            // This is used to calculate TotalPages in StudentIndexVM
             var totalItems = query.Count();
 
+            // =========================
+            // PAGINATION
+            // =========================
+            // Important enterprise rule:
+            // Always use OrderBy before Skip/Take.
             var pagedStudents = query
-                .OrderBy(s => s.Name)
+                .OrderBy(s => s.Id)
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .Select(s => new StudentListItemVM
@@ -352,29 +416,32 @@ public async Task<StudentCreateVM> BuildCreateVMAsync()
                     Id = s.Id,
                     Name = s.Name,
                     BirthDate = s.BirthDate,
+
                     ParentName = s.Parent != null
                         ? s.Parent.FullName
                         : null
                 })
                 .ToList();
 
-            var parents = await _unitOfWork.Parents.GetAllAsync();
-
+            // =========================
+            // LOAD PARENTS DROPDOWN
+            // =========================
+            // =========================
+            // BUILD FINAL VIEWMODEL
+            // =========================
             return new StudentIndexVM
             {
                 Students = pagedStudents,
+
                 SearchTerm = searchTerm,
                 ParentId = parentId,
+
                 PageNumber = pageNumber,
                 PageSize = pageSize,
                 TotalItems = totalItems,
 
-                Parents = parents.Select(p => new SelectListItem
-                {
-                    Value = p.Id.ToString(),
-                    Text = p.FullName,
-                    Selected = parentId.HasValue && p.Id == parentId.Value
-                }).ToList()
+                // Reuse dropdown builder and keep selected parent after filtering
+                Parents = await BuildParentsSelectListAsync(parentId)
             };
         }
     }

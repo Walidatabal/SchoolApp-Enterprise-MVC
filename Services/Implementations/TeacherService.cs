@@ -216,7 +216,14 @@ namespace SchoolApp.Services.Implementations
 
             var oldStatus = teacher.Status;
 
+            // Change teacher status from Pending to Approved
             teacher.Status = ApprovalStatus.Approved;
+
+            // Tell repository that this entity was updated
+            _unitOfWork.Teachers.Update(teacher);
+
+            // Save changes to database
+            await _unitOfWork.CompleteAsync();
 
             _logger.LogInfo(
                 $"Teacher approved. Id={teacherId}, OldStatus={oldStatus}, NewStatus={teacher.Status}");

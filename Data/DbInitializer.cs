@@ -7,6 +7,19 @@ using SchoolApp.Models.Entities;
 
 namespace SchoolApp.Data
 {
+    // =========================================================
+    // DATABASE INITIALIZER
+    // =========================================================
+    // Purpose:
+    // 1. Create required roles
+    // 2. Create admin users
+    // 3. Clear old test data
+    // 4. Insert fresh professional test data
+    //
+    // NOTE:
+    // This is for DEVELOPMENT / TESTING only.
+    // Do NOT use data deletion like this in production.
+    // =========================================================
     public static class DbInitializer
     {
         public static async Task SeedAsync(IServiceProvider services)
@@ -15,6 +28,7 @@ namespace SchoolApp.Data
             var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
             var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
             var config = services.GetRequiredService<IConfiguration>();
+
             var adminPassword = DefaultUsers.GetAdminPassword(config);
 
             // =========================
@@ -22,12 +36,12 @@ namespace SchoolApp.Data
             // =========================
             var roles = new[]
             {
-                "Admin",
-                "Teacher",
-                "PendingTeacher",
-                "Student",
-                "Parent",
-                "User"
+                Roles.Admin,
+                Roles.Teacher,
+                Roles.PendingTeacher,
+                Roles.Student,
+                Roles.Parent,
+                Roles.User
             };
 
             foreach (var role in roles)
@@ -39,97 +53,179 @@ namespace SchoolApp.Data
             // =========================
             // 2) SEED ADMIN USERS
             // =========================
-            await CreateUserAsync(userManager, "admin@school.com", adminPassword, "Admin");
-            await CreateUserAsync(userManager, "manager@school.com", adminPassword, "Admin");
+            await CreateUserAsync(userManager, "admin@school.com", adminPassword, Roles.Admin);
+            await CreateUserAsync(userManager, "manager@school.com", adminPassword, Roles.Admin);
 
             // =========================
-            // 3) SEED DEPARTMENTS
+            // 3) CLEAR OLD TEST DATA
             // =========================
-            if (!context.Departments.Any())
+            // Delete child tables first because of relationships.
+            context.Enrollments.RemoveRange(context.Enrollments);
+            context.TeacherCourses.RemoveRange(context.TeacherCourses);
+            context.Courses.RemoveRange(context.Courses);
+            context.Students.RemoveRange(context.Students);
+            context.Teachers.RemoveRange(context.Teachers);
+            context.Parents.RemoveRange(context.Parents);
+            context.ClassRooms.RemoveRange(context.ClassRooms);
+            context.Departments.RemoveRange(context.Departments);
+
+            await context.SaveChangesAsync();
+
+            // =========================
+            // 4) SEED DEPARTMENTS
+            // =========================
+            var departments = new List<Department>
             {
-                context.Departments.AddRange(
-                    new Department { Name = "قسم الرياضيات" },
-                    new Department { Name = "قسم العلوم" },
-                    new Department { Name = "قسم اللغة الإنجليزية" },
-                    new Department { Name = "قسم الحاسب الآلي" },
-                    new Department { Name = "قسم التربية البدنية" }
-                );
+                new Department { Name = "Mathematics Department" },
+                new Department { Name = "Science Department" },
+                new Department { Name = "English Department" },
+                new Department { Name = "Computer Science Department" },
+                new Department { Name = "Physical Education Department" }
+            };
 
-                await context.SaveChangesAsync();
-            }
+            context.Departments.AddRange(departments);
+            await context.SaveChangesAsync();
 
             // =========================
-            // 4) SEED CLASSROOMS / OFFICES
+            // 5) SEED CLASSROOMS
             // =========================
-            if (!context.ClassRooms.Any())
+            var classrooms = new List<ClassRoom>
             {
-                context.ClassRooms.AddRange(
-                    new ClassRoom { Name = "فصل 101", Capacity = 30, Location = "المبنى A - الدور الأول" },
-                    new ClassRoom { Name = "فصل 102", Capacity = 28, Location = "المبنى A - الدور الأول" },
-                    new ClassRoom { Name = "معمل الحاسب", Capacity = 25, Location = "المبنى B - الدور الثاني" },
-                    new ClassRoom { Name = "معمل العلوم", Capacity = 24, Location = "المبنى C - الدور الأول" },
-                    new ClassRoom { Name = "مكتب الإدارة", Capacity = 6, Location = "المبنى الرئيسي" }
-                );
+                new ClassRoom { Name = "Class 101", Capacity = 30, Location = "Building A - First Floor" },
+                new ClassRoom { Name = "Class 102", Capacity = 28, Location = "Building A - First Floor" },
+                new ClassRoom { Name = "Computer Lab", Capacity = 25, Location = "Building B - Second Floor" },
+                new ClassRoom { Name = "Science Lab", Capacity = 24, Location = "Building C - First Floor" },
+                new ClassRoom { Name = "Sports Hall", Capacity = 40, Location = "Main Building" }
+            };
 
-                await context.SaveChangesAsync();
-            }
+            context.ClassRooms.AddRange(classrooms);
+            await context.SaveChangesAsync();
 
             // =========================
-            // 5) SEED TEACHERS + USERS
+            // 6) SEED PARENTS
+            // =========================
+            var parents = new List<Parent>
+            {
+                new Parent { FullName = "Ahmed Hassan", PhoneNumber = "99990001", Address = "Kuwait City" },
+                new Parent { FullName = "Mohamed Ali", PhoneNumber = "99990002", Address = "Hawally" },
+                new Parent { FullName = "Sara Khaled", PhoneNumber = "99990003", Address = "Salmiya" },
+                new Parent { FullName = "Omar Mahmoud", PhoneNumber = "99990004", Address = "Farwaniya" },
+                new Parent { FullName = "Fatma Adel", PhoneNumber = "99990005", Address = "Jahra" },
+                new Parent { FullName = "Youssef Ibrahim", PhoneNumber = "99990006", Address = "Mangaf" },
+                new Parent { FullName = "Mona Samir", PhoneNumber = "99990007", Address = "Fahaheel" },
+                new Parent { FullName = "Khaled Mostafa", PhoneNumber = "99990008", Address = "Mahboula" }
+            };
+
+            context.Parents.AddRange(parents);
+            await context.SaveChangesAsync();
+
+            // =========================
+            // 7) SEED TEACHERS + USERS
             // =========================
             var teachersData = new[]
             {
-                new { Name = "أحمد محمد", Email = "ahmed.teacher@school.com", Specialization = "رياضيات", Location = "مكتب 201", Status = ApprovalStatus.Approved },
-                new { Name = "سارة علي", Email = "sara.teacher@school.com", Specialization = "لغة إنجليزية", Location = "مكتب 202", Status = ApprovalStatus.Approved },
-                new { Name = "محمد حسن", Email = "mohamed.teacher@school.com", Specialization = "حاسب آلي", Location = "معمل الحاسب", Status = ApprovalStatus.Approved },
-                new { Name = "فاطمة خالد", Email = "fatma.teacher@school.com", Specialization = "علوم", Location = "معمل العلوم", Status = ApprovalStatus.Pending },
-                new { Name = "يوسف إبراهيم", Email = "yousef.teacher@school.com", Specialization = "تربية بدنية", Location = "الصالة الرياضية", Status = ApprovalStatus.Pending }
+                new { Name = "Ahmed Mohamed", Email = "ahmed.teacher@school.com", Specialization = "Mathematics", Location = "Office 201", Status = ApprovalStatus.Approved },
+                new { Name = "Sara Ali", Email = "sara.teacher@school.com", Specialization = "English", Location = "Office 202", Status = ApprovalStatus.Approved },
+                new { Name = "Mohamed Hassan", Email = "mohamed.teacher@school.com", Specialization = "Computer Science", Location = "Computer Lab", Status = ApprovalStatus.Approved },
+                new { Name = "Fatma Khaled", Email = "fatma.teacher@school.com", Specialization = "Science", Location = "Science Lab", Status = ApprovalStatus.Pending },
+                new { Name = "Youssef Ibrahim", Email = "youssef.teacher@school.com", Specialization = "Physical Education", Location = "Sports Hall", Status = ApprovalStatus.Pending },
+                new { Name = "Noura Adel", Email = "noura.teacher@school.com", Specialization = "Chemistry", Location = "Science Lab", Status = ApprovalStatus.Approved }
             };
 
             foreach (var item in teachersData)
             {
-                var role = item.Status == ApprovalStatus.Approved ? "Teacher" : "PendingTeacher";
+                var role = item.Status == ApprovalStatus.Approved
+                    ? Roles.Teacher
+                    : Roles.PendingTeacher;
 
                 var user = await CreateUserAsync(userManager, item.Email, "Test123!", role);
 
-                if (!context.Teachers.Any(t => t.UserId == user.Id))
+                context.Teachers.Add(new Teacher
                 {
-                    context.Teachers.Add(new Teacher
-                    {
-                        Name = item.Name,
-                        Specialization = item.Specialization,
-                        Location = item.Location,
-                        Status = item.Status,
-                        UserId = user.Id
-                    });
-                }
+                    Name = item.Name,
+                    Specialization = item.Specialization,
+                    Location = item.Location,
+                    Status = item.Status,
+                    UserId = user.Id
+                });
             }
 
             await context.SaveChangesAsync();
 
             // =========================
-            // 6) SEED STUDENTS + USERS
+            // 8) SEED STUDENTS + USERS
             // =========================
-            var studentsData = new[]
+            var parentIds = await context.Parents
+                .Select(p => p.Id)
+                .ToListAsync();
+
+            for (int i = 1; i <= 50; i++)
             {
-                new { Name = "عمر وليد", Email = "omar.student@school.com", BirthDate = new DateTime(2012, 5, 10) },
-                new { Name = "ليلى أحمد", Email = "laila.student@school.com", BirthDate = new DateTime(2011, 3, 15) },
-                new { Name = "خالد سامي", Email = "khaled.student@school.com", BirthDate = new DateTime(2013, 8, 22) },
-                new { Name = "ملك محمد", Email = "malak.student@school.com", BirthDate = new DateTime(2012, 11, 5) },
-                new { Name = "سيف علي", Email = "saif.student@school.com", BirthDate = new DateTime(2011, 9, 1) }
+                var email = $"student{i}@school.com";
+
+                var user = await CreateUserAsync(
+                    userManager,
+                    email,
+                    "Test123!",
+                    Roles.Student);
+
+                context.Students.Add(new Student
+                {
+                    Name = $"Student {i}",
+                    BirthDate = new DateTime(
+                        2010 + (i % 4),
+                        (i % 12) + 1,
+                        (i % 28) + 1),
+
+                    UserId = user.Id,
+
+                    // Assign parent in rotation
+                    ParentId = parentIds[(i - 1) % parentIds.Count]
+                });
+            }
+
+            await context.SaveChangesAsync();
+
+            // =========================
+            // 9) SEED COURSES
+            // =========================
+            var class101 = await context.ClassRooms.FirstAsync(c => c.Name == "Class 101");
+            var class102 = await context.ClassRooms.FirstAsync(c => c.Name == "Class 102");
+            var computerLab = await context.ClassRooms.FirstAsync(c => c.Name == "Computer Lab");
+            var scienceLab = await context.ClassRooms.FirstAsync(c => c.Name == "Science Lab");
+            var sportsHall = await context.ClassRooms.FirstAsync(c => c.Name == "Sports Hall");
+
+            var courses = new List<Course>
+            {
+                new Course { Name = "Mathematics", ClassRoomId = class101.Id },
+                new Course { Name = "English", ClassRoomId = class102.Id },
+                new Course { Name = "Computer Science", ClassRoomId = computerLab.Id },
+                new Course { Name = "Chemistry", ClassRoomId = scienceLab.Id },
+                new Course { Name = "Physics", ClassRoomId = scienceLab.Id },
+                new Course { Name = "Physical Education", ClassRoomId = sportsHall.Id }
             };
 
-            foreach (var item in studentsData)
-            {
-                var user = await CreateUserAsync(userManager, item.Email, "Test123!", "Student");
+            context.Courses.AddRange(courses);
+            await context.SaveChangesAsync();
 
-                if (!context.Students.Any(s => s.UserId == user.Id))
+            // =========================
+            // 10) SEED TEACHER-COURSE RELATIONS
+            // =========================
+            var teachers = await context.Teachers.ToListAsync();
+            var allCourses = await context.Courses.ToListAsync();
+
+            foreach (var course in allCourses)
+            {
+                var teacher = teachers.FirstOrDefault(t =>
+                    course.Name.Contains(t.Specialization) ||
+                    t.Specialization.Contains(course.Name));
+
+                if (teacher != null)
                 {
-                    context.Students.Add(new Student
+                    context.TeacherCourses.Add(new TeacherCourse
                     {
-                        Name = item.Name,
-                        BirthDate = item.BirthDate,
-                        UserId = user.Id
+                        TeacherId = teacher.Id,
+                        CourseId = course.Id
                     });
                 }
             }
@@ -137,78 +233,38 @@ namespace SchoolApp.Data
             await context.SaveChangesAsync();
 
             // =========================
-            // 7) SEED COURSES
+            // 11) SEED ENROLLMENTS
             // =========================
-            if (!context.Courses.Any())
+            var students = await context.Students.ToListAsync();
+            var courseList = await context.Courses.ToListAsync();
+
+            foreach (var student in students)
             {
-                var classRoom101 = context.ClassRooms.FirstOrDefault(c => c.Name == "فصل 101");
-                var computerLab = context.ClassRooms.FirstOrDefault(c => c.Name == "معمل الحاسب");
-                var scienceLab = context.ClassRooms.FirstOrDefault(c => c.Name == "معمل العلوم");
+                // Each student enrolls in 2 courses
+                var firstCourse = courseList[student.Id % courseList.Count];
+                var secondCourse = courseList[(student.Id + 1) % courseList.Count];
 
-                context.Courses.AddRange(
-                    new Course { Name = "Mathematics", ClassRoomId = classRoom101?.Id },
-                    new Course { Name = "English", ClassRoomId = classRoom101?.Id },
-                    new Course { Name = "Computer Science", ClassRoomId = computerLab?.Id },
-                    new Course { Name = "Chemistry", ClassRoomId = scienceLab?.Id },
-                    new Course { Name = "Physical Education" }
-                );
-
-                await context.SaveChangesAsync();
-            }
-
-            // =========================
-            // 8) SEED TEACHER-COURSE RELATIONS
-            // =========================
-            if (!context.TeacherCourses.Any())
-            {
-                var mathTeacher = context.Teachers.FirstOrDefault(t => t.Specialization == "رياضيات");
-                var englishTeacher = context.Teachers.FirstOrDefault(t => t.Specialization == "لغة إنجليزية");
-                var computerTeacher = context.Teachers.FirstOrDefault(t => t.Specialization == "حاسب آلي");
-
-                var math = context.Courses.FirstOrDefault(c => c.Name == "Mathematics");
-                var english = context.Courses.FirstOrDefault(c => c.Name == "English");
-                var computer = context.Courses.FirstOrDefault(c => c.Name == "Computer Science");
-
-                if (mathTeacher != null && math != null)
-                    context.TeacherCourses.Add(new TeacherCourse { TeacherId = mathTeacher.Id, CourseId = math.Id });
-
-                if (englishTeacher != null && english != null)
-                    context.TeacherCourses.Add(new TeacherCourse { TeacherId = englishTeacher.Id, CourseId = english.Id });
-
-                if (computerTeacher != null && computer != null)
-                    context.TeacherCourses.Add(new TeacherCourse { TeacherId = computerTeacher.Id, CourseId = computer.Id });
-
-                await context.SaveChangesAsync();
-            }
-
-            // =========================
-            // 9) SEED ENROLLMENTS
-            // =========================
-            if (!context.Enrollments.Any())
-            {
-                var students = context.Students.Take(5).ToList();
-                var courses = context.Courses.Take(4).ToList();
-
-                foreach (var student in students)
+                context.Enrollments.Add(new Enrollment
                 {
-                    foreach (var course in courses.Take(2))
-                    {
-                        context.Enrollments.Add(new Enrollment
-                        {
-                            StudentId = student.Id,
-                            CourseId = course.Id,
-                            EnrollmentDate = DateTime.Today
-                        });
-                    }
-                }
+                    StudentId = student.Id,
+                    CourseId = firstCourse.Id,
+                    EnrollmentDate = DateTime.Today
+                });
 
-                await context.SaveChangesAsync();
+                context.Enrollments.Add(new Enrollment
+                {
+                    StudentId = student.Id,
+                    CourseId = secondCourse.Id,
+                    EnrollmentDate = DateTime.Today
+                });
             }
+
+            await context.SaveChangesAsync();
         }
 
-        // =========================
-        // HELPER: CREATE IDENTITY USER
-        // =========================
+        // =========================================================
+        // HELPER METHOD: CREATE IDENTITY USER
+        // =========================================================
         private static async Task<ApplicationUser> CreateUserAsync(
             UserManager<ApplicationUser> userManager,
             string email,
@@ -226,11 +282,29 @@ namespace SchoolApp.Data
                     EmailConfirmed = true
                 };
 
-                await userManager.CreateAsync(user, password);
+                var createResult = await userManager.CreateAsync(user, password);
+
+                if (!createResult.Succeeded)
+                {
+                    var errors = string.Join(", ",
+                        createResult.Errors.Select(e => e.Description));
+
+                    throw new Exception($"Failed to create user {email}: {errors}");
+                }
             }
 
             if (!await userManager.IsInRoleAsync(user, role))
-                await userManager.AddToRoleAsync(user, role);
+            {
+                var roleResult = await userManager.AddToRoleAsync(user, role);
+
+                if (!roleResult.Succeeded)
+                {
+                    var errors = string.Join(", ",
+                        roleResult.Errors.Select(e => e.Description));
+
+                    throw new Exception($"Failed to add role {role} to {email}: {errors}");
+                }
+            }
 
             return user;
         }

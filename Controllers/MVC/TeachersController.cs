@@ -83,31 +83,35 @@ namespace SchoolApp.Controllers.MVC
             return View(model);
         }
 
+        [Authorize(Roles = Roles.Admin)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ApproveTeacher(int teacherId)
         {
             var result = await _service.ApproveTeacherAsync(teacherId);
 
-            TempData[result.Success ? "Success" : "Error"] = result.Message;
+            if (!result.Success)
+                TempData["Error"] = result.Message;
+            else
+                TempData["Success"] = result.Message;
 
             return RedirectToAction(nameof(PendingTeachers));
         }
 
+        [Authorize(Roles = Roles.Admin)]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> RejectTeacher(int teacherId)
         {
             var result = await _service.RejectTeacherAsync(teacherId);
 
-            TempData[result.Success ? "Success" : "Error"] = result.Success
-                ? "Teacher rejected."
-                : result.Message;
+            if (!result.Success)
+                TempData["Error"] = result.Message;
+            else
+                TempData["Success"] = result.Message;
 
             return RedirectToAction(nameof(PendingTeachers));
         }
-
         [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> Delete(int id)
         {

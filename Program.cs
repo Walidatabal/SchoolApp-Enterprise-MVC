@@ -200,7 +200,7 @@ builder.Services.AddValidatorsFromAssemblyContaining<StudentCreateValidator>();
 // =========================
 // 🔄 AUTOMAPPER
 // =========================
-builder.Services.AddAutoMapper(typeof(MappingProfile));
+builder.Services.AddAutoMapper(typeof(StudentProfile).Assembly);
 
 // =========================
 // 🌐 HTTP CLIENT
@@ -318,6 +318,17 @@ using (var scope = app.Services.CreateScope())  // ✅ Ensure database is create
     await db.Database.MigrateAsync();
 
     // 2. Then seed roles, admin, test data
-    await DbInitializer.SeedAsync(services);
+    await DbSeeder.SeedAsync(services);
 }
+
+// =========================
+// DATABASE SEEDING
+// =========================
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+
+    await DbSeeder.SeedAsync(services);
+}
+
 app.Run();

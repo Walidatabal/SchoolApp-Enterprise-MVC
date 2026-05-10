@@ -28,6 +28,8 @@ namespace SchoolApp.Models.Entities
 
         // Navigation Property
         public Parent? Parent { get; set; }
+
+       
     }
 
     //public ICollection<Enrollment> Enrollments { get; set; }

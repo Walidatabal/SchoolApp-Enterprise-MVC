@@ -87,5 +87,6 @@ namespace SchoolApp.Services.Interfaces
         Task<ServiceResult<bool>> ApproveTeacherAsync(int teacherId);
         Task<ServiceResult<bool>> RejectTeacherAsync(int teacherId);
 
+
     }
 }

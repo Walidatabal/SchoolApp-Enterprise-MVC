@@ -51,7 +51,7 @@
                                name="searchTerm"
                                value="@Model.SearchTerm"
                                class="form-control"
-                               placeholder="Search by student name..." />
+                               placeholder="Search by student ID, name, or parent..." />
                     </div>
 
                     <div class="col-md-3">
@@ -162,6 +162,9 @@
 
                         <tr>
 
+                            <!-- STUDENT ID -->
+                            <th>ID</th>
+
                             <th>Student</th>
 
                             <th>Birth Date</th>
@@ -185,7 +188,7 @@
                         {
                             <tr>
 
-                                <td colspan="4"
+                                <td colspan="5"
                                     class="text-center text-muted py-4">
 
                                     No students found.
@@ -200,6 +203,15 @@
                             @foreach (var student in Model.Students)
                             {
                                 <tr>
+
+                                    <!-- STUDENT ID -->
+                                    <td>
+
+                                        <span class="badge bg-dark">
+                                            #@student.Id
+                                        </span>
+
+                                    </td>
 
                                     <!-- STUDENT -->
                                     <td>
